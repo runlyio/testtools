@@ -4,6 +4,26 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <AssemblyName>Runly.TestTools.SignalR</AssemblyName>
     <RootNamespace>Runly.TestTools.SignalR</RootNamespace>
+
+    <Authors>Chad Lee;William Sossamon</Authors>
+    <Company>Runly LLC</Company>
+
+    <Description>Tools for testing code that uses SignalR</Description>
+    <PackageTags>test;unit testing;integration testing;signalr;</PackageTags>
+
+    <Copyright>Copyright © Runly LLC 2020</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+
+    <PackageProjectUrl>https://www.runly.io/</PackageProjectUrl>
+    <PackageReleaseNotes>https://github.com/runlyio/testtools/releases</PackageReleaseNotes>
+
+    <RepositoryUrl>https://github.com/runlyio/testtools.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+
+    <PackageIcon>logo.png</PackageIcon>
+    <MinVerTagPrefix>v</MinVerTagPrefix>
+
+    <LangVersion>8.0</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
