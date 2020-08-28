@@ -23,7 +23,7 @@
     <PackageIcon>logo.png</PackageIcon>
     <MinVerTagPrefix>v</MinVerTagPrefix>
 
-    <LangVersion>8.0</LangVersion>
+    <LangVersion>8.0</LangVersion>		
   </PropertyGroup>
 
 	<ItemGroup>
@@ -32,6 +32,10 @@
   
 	<ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="3.*" />
+		<PackageReference Include="MinVer" Version="2.3.0">
+			   <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			   <PrivateAssets>all</PrivateAssets>
+		</PackageReference>
   </ItemGroup>
 
 </Project>
