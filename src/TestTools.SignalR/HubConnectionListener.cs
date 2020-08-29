@@ -7,9 +7,14 @@ using System.Threading.Tasks;
 
 namespace Runly.TestTools.SignalR
 {
+	/// <summary>
+	/// Synchronizes code that must wait for a method call on a <see cref="HubConnection"/>.
+	/// </summary>
 	public class HubConnectionListener
 	{
 		readonly Dictionary<string, WaitCounter> methods = new Dictionary<string, WaitCounter>();
+
+		public int Timeout { get; set; }
 
 		public HubConnectionListener(HubConnection connection, params string[] methodNames)
 		{
@@ -27,11 +32,27 @@ namespace Runly.TestTools.SignalR
 			}
 		}
 
+		/// <summary>
+		/// Sets the default <see cref="Timeout"/> for this <see cref="HubConnectionListener"/>.
+		/// </summary>
+		/// <param name="seconds">The number of seconds to wait before timing out.</param>
+		public HubConnectionListener WithTimeout(int seconds)
+		{
+			this.Timeout = seconds;
+			return this;
+		}
+
+		/// <summary>
+		/// When awaited, blocks the calling code until the method specified is invoked at least <paramref name="count"/> number of times.
+		/// </summary>
+		/// <param name="methodName">The method to wait for.</param>
+		/// <param name="count">The number of times the method must be called before satisfying this condition.</param>
+		/// <returns>A task-like type that can be awaited.</returns>
 		public WhenBuilder When(string methodName, int count = 1)
 		{
 			_ = methodName ?? throw new ArgumentNullException(nameof(methodName));
 
-			var hct = new WhenBuilder(methods);
+			var hct = new WhenBuilder(methods, Timeout);
 			hct.AddCondition(methodName, count);
 			return hct;
 		}
@@ -44,7 +65,7 @@ namespace Runly.TestTools.SignalR
 
 			public int Timeout { get; set; }
 
-			public WhenBuilder(Dictionary<string, WaitCounter> methods) => this.methods = methods;
+			public WhenBuilder(Dictionary<string, WaitCounter> methods, int timeout) => (this.methods, Timeout) = (methods, timeout);
 
 			public void AddCondition(string methodName, int count)
 			{
@@ -56,6 +77,12 @@ namespace Runly.TestTools.SignalR
 
 			public TaskAwaiter GetAwaiter() => Task.WhenAll(conditions.Select(c => c.Counter.ReleaseAt(c.Count, Timeout * 1000))).GetAwaiter();
 
+			/// <summary>
+			/// When awaited, blocks the calling code until the method specified is invoked at least <paramref name="count"/> number of times.
+			/// </summary>
+			/// <param name="methodName">The method to wait for.</param>
+			/// <param name="count">The number of times the method must be called before satisfying this condition.</param>
+			/// <returns>A task-like type that can be awaited.</returns>
 			public WhenBuilder And(string methodName, int count = 1)
 			{
 				_ = methodName ?? throw new ArgumentNullException(nameof(methodName));
@@ -64,6 +91,10 @@ namespace Runly.TestTools.SignalR
 				return this;
 			}
 
+			/// <summary>
+			/// Sets the <see cref="Timeout"/> for this condition.
+			/// </summary>
+			/// <param name="seconds">The number of seconds to wait before timing out.</param>
 			public WhenBuilder WithTimeout(int seconds)
 			{
 				this.Timeout = seconds;
